@@ -30,7 +30,10 @@ class AuthenticatorFacade
      */
     function byAuth($authenticatorName = self::AUTHENTICATOR_DEFAULT)
     {
-        
+        if (!isset($this->authenticators[$authenticatorName]))
+            throw new \Exception(sprintf('Authenticator (%s) Not Registered.', $authenticatorName));
+
+        return $this->authenticators[$authenticatorName];
     }
 
 

@@ -22,6 +22,7 @@ class Module implements iSapiModule
 {
     const CONF_KEY = 'module.authorization';
 
+    
     /**
      * @inheritdoc
      */
