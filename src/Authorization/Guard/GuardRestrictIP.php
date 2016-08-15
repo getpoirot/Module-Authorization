@@ -20,7 +20,7 @@ class GuardRestrictIP
     /** @var array */
     protected $blockList;
 
-    
+
     /**
      * Is allowed to features?
      *
@@ -58,6 +58,10 @@ class GuardRestrictIP
      */
     function attachToEvent(iEvent $event)
     {
+        if (\Poirot\isCommandLine())
+            // Restriction IP Only Work With Http Sapi
+            return $this;
+
         $self = $this;
 
         $event->on(EventHeapOfSapi::EVENT_APP_ROUTE_MATCH, function() use ($self) {
