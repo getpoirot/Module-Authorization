@@ -3,7 +3,7 @@ namespace Module\Authorization;
 
 use Module\Authorization\Module\AuthenticatorFacade;
 use Poirot\Application\aSapi;
-use Poirot\Application\Sapi;
+use Poirot\Application\Interfaces\Sapi;
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 
 use Poirot\Application\SapiCli;
@@ -15,10 +15,10 @@ use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
 use Poirot\Std\Interfaces\Struct\iDataEntity;
 
 class Module implements iSapiModule
-    , Sapi\Module\Feature\FeatureModuleAutoload
-    , Sapi\Module\Feature\FeatureModuleMergeConfig
-    , Sapi\Module\Feature\FeatureModuleNestFacade
-    , Sapi\Module\Feature\FeatureOnPostLoadModulesGrabServices
+    , Sapi\Module\Feature\iFeatureModuleAutoload
+    , Sapi\Module\Feature\iFeatureModuleMergeConfig
+    , Sapi\Module\Feature\iFeatureModuleNestFacade
+    , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
     const CONF_KEY = 'module.authorization';
 
@@ -62,14 +62,19 @@ class Module implements iSapiModule
      */
     function resolveRegisteredServices($services = null, $sapi = null)
     {
-        ## Build Mongo Client Managements With Merged Configs
-
         $config = $sapi->config()->get(self::CONF_KEY);
-
-        if ($config) {
-            /** @var AuthenticatorFacade $authenticatorFacade */
-            $authenticatorFacade = $services->get('/module/authorization');
+        
+        /** @var AuthenticatorFacade $authenticatorFacade */
+        $authenticatorFacade = $services->get('/module/authorization');
+        
+        ## Build Authorization Facade With Merged Configs
+        if ($config)
             $authenticatorFacade->with($config);
-        }
+        
+        ## Attach Guards Into Events
+        foreach ($authenticatorFacade->listGuards() as $guardName)
+            $authenticatorFacade->guard($guardName)
+                ->attachToEvent($sapi->event());
+        
     }
 }
