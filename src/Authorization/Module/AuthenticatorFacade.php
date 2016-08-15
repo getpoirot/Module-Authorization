@@ -1,23 +1,33 @@
 <?php
 namespace Module\Authorization\Module;
 
+use Module\Authorization\Interfaces\iGuard;
+
 use Poirot\AuthSystem\Authenticate\Authenticator;
-use Poirot\AuthSystem\Authenticate\Identifier\aIdentifier;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
-use Poirot\AuthSystem\Authenticate\Interfaces\iIdentifier;
-use Poirot\AuthSystem\Authenticate\Interfaces\iIdentityCredentialRepo;
-use Poirot\AuthSystem\Authenticate\RepoIdentityCredential\aIdentityCredentialAdapter;
+use Poirot\AuthSystem\Authorize\Interfaces\iAuthorize;
 
 use Poirot\Std\aConfigurable;
+use Poirot\Std\Interfaces\Pact\ipConfigurable;
+
 
 class AuthenticatorFacade
     extends aConfigurable
 {
     const CONF_KEY_AUTHENTICATORS = 'authenticators';
-    const AUTHENTICATOR_DEFAULT = 'default';
-    
-    /** @var iAuthenticator[] */
-    protected $authenticators;
+    const CONF_KEY_GUARDS         = 'guards';
+
+    const AUTHENTICATOR_DEFAULT   = 'default';
+
+
+    /** @var array */
+    protected $authenticators = array(
+        # 'authenticator_name' => iAuthenticator | (array) options
+    );
+
+    protected $guards = array(
+        # 'guard_name' => iGuard | (array) options
+    );
 
 
     /**
@@ -28,12 +38,64 @@ class AuthenticatorFacade
      * @return iAuthenticator|Authenticator
      * @throws \Exception
      */
-    function byAuth($authenticatorName = self::AUTHENTICATOR_DEFAULT)
+    function authenticator($authenticatorName = self::AUTHENTICATOR_DEFAULT)
     {
         if (!isset($this->authenticators[$authenticatorName]))
             throw new \Exception(sprintf('Authenticator (%s) Not Registered.', $authenticatorName));
 
-        return $this->authenticators[$authenticatorName];
+        $authenticator = $this->authenticators[$authenticatorName];
+        if ($authenticator instanceof iAuthenticator)
+            return $authenticator;
+
+        
+        // Lazy Load Authenticators
+        $authenticator = FactoryAuthenticator::of($authenticator);
+        $this->authenticators[$authenticatorName] = $authenticator;
+        return $authenticator;
+    }
+
+    /**
+     * List Registered Authenticators Name
+     * 
+     * @return string[]
+     */
+    function listAuthenticators()
+    {
+        return array_keys($this->authenticators);
+    }
+
+    /**
+     * Retrieve Authorization Guard
+     * 
+     * @param string $authorizeOfGuardName
+     * 
+     * @return iGuard
+     * @throws \Exception
+     */
+    function guard($authorizeOfGuardName)
+    {
+        if (!isset($this->guards[$authorizeOfGuardName]))
+            throw new \Exception(sprintf('Guard Authorization (%s) Not Registered.', $authorizeOfGuardName));
+
+        $guard = $this->guards[$authorizeOfGuardName];
+        if ($guard instanceof iGuard)
+            return $guard;
+
+
+        // Lazy Load Guards
+        $guard = $this->_factoryGuard($guard);
+        $this->guards[$authorizeOfGuardName] = $guard;
+        return $guard;
+    }
+
+    /**
+     * List Registered Authorizations Name
+     *
+     * @return string[]
+     */
+    function listGuards()
+    {
+        return array_keys($this->guards);
     }
 
 
@@ -53,109 +115,32 @@ class AuthenticatorFacade
                 , \Poirot\Std\flatten($options)
             ));
 
-
-        // Register Authenticators
+        # Register Authenticators
         $Authenticators = \Poirot\Std\emptyCoalesce(@$options[self::CONF_KEY_AUTHENTICATORS]);
-        if ($Authenticators)
-            $this->_withAuthenticators($Authenticators);
+        if ($Authenticators) {
+            foreach ($Authenticators as $name => $authenticatorOptions)
+                // Lazy Load Authenticators
+                $this->authenticators[$name] = $authenticatorOptions;
+        }
 
-
-    }
-
-
-    // ..
-
-    /**
-     * Register Authenticators With Options
-     *
-     * @param array $Authenticators
-     *
-     * @throws \Exception
-     */
-    protected function _withAuthenticators(array $Authenticators)
-    {
-        /*
-         * default Array(3) … - Sorted
-         *   realm String(12) => Default_Auth
-         *   identifier Array(2) …
-         *   adapter Array(2) …
-         */
-        foreach ($Authenticators as $name => $options)
-        {
-            if ($options instanceof iAuthenticator) {
-                $this->authenticators[$name] = $options;
-                continue;
-            }
-
-            $options    = $this->_assertOptions($options);
-            $realm      = \Poirot\Std\emptyCoalesce(@$options['realm']);
-            $identifier = \Poirot\Std\emptyCoalesce(@$options['identifier']);
-            $adapter    = \Poirot\Std\emptyCoalesce(@$options['adapter']);
-
-            if ($realm === null || $identifier === null)
-                throw new \Exception('Config Provided for (%s) not include "realm" or "adapter".');
-
-            ## Authenticator Identifier:
-            if (!$identifier instanceof iIdentifier) {
-                // from options
-                $identifier        = $this->_assertOptions($identifier);
-                $identifierClass   = \Poirot\Std\emptyCoalesce(@$identifier['class']);
-                $identifierOptions = \Poirot\Std\emptyCoalesce(@$identifier['options']);
-                
-                if (!class_exists($identifierClass))
-                    throw new \Exception(sprintf('Identifier (%s) Not Found.', \Poirot\Std\flatten($identifierClass)));
-
-                /** @var aIdentifier|iIdentifier $identifier */
-                $identifier = new $identifierClass;
-                
-                if (!$identifier instanceof iIdentifier)
-                    throw new \Exception(sprintf('Invalid Identifier (%s).', \Poirot\Std\flatten($identifier)));
-                
-                if ($identifierOptions) {
-                    if (!$identifier instanceof aIdentifier)
-                        throw new \Exception(sprintf(
-                            'Options Provided For Unknown Identifier (%s).', \Poirot\Std\flatten($identifier)
-                        ));
-                    
-                    $identifier->with($identifierOptions);
-                }
-            }
-            
-            $identifier->setRealm($realm);
-
-            ## Authenticator Adapter
-            if ($adapter !== null) {
-                if (!$adapter instanceof iIdentityCredentialRepo) {
-                    $adapter = $this->_assertOptions($adapter);
-                    $adapterClass = \Poirot\Std\emptyCoalesce(@$adapter['class']);
-                    $adapterOptions = \Poirot\Std\emptyCoalesce(@$adapter['options']);
-
-                    if (!class_exists($adapterClass))
-                        throw new \Exception(sprintf('Adapter (%s) Not Found.', \Poirot\Std\flatten($adapterClass)));
-
-                    /** @var aIdentityCredentialAdapter|iIdentityCredentialRepo $identifier */
-                    $adapter = new $adapterClass;
-
-                    if (!$adapter instanceof iIdentityCredentialRepo)
-                        throw new \Exception(sprintf('Invalid Adapter (%s).', \Poirot\Std\flatten($adapter)));
-
-                    if ($adapterOptions) {
-                        if (!$adapter instanceof aIdentityCredentialAdapter)
-                            throw new \Exception(sprintf(
-                                'Options Provided For Unknown Adapter (%s).', \Poirot\Std\flatten($adapter)
-                            ));
-
-                        $adapter->import($adapterOptions);
-                    }
-                }
-            }
-
-            $authenticator = new Authenticator($identifier, $adapter);
-            $this->authenticators[$name] = $authenticator;
+        # Register Guards
+        $Guards = \Poirot\Std\emptyCoalesce(@$options[self::CONF_KEY_GUARDS]);
+        if ($Guards) {
+            foreach ($Guards as $name => $guardOptions)
+                // Lazy Load Guards
+                $this->guards[$name] = $guardOptions;
         }
     }
 
-    protected function _assertOptions($options)
+    /**
+     * Factory Guard
+     *
+     * @param $options
+     *
+     * @return iGuard
+     * @throws \Exception
+     */
+    protected function _factoryGuard($options)
     {
         if ($options instanceof \Traversable)
             $options = \Poirot\Std\cast($options)->toArray();
@@ -166,7 +151,71 @@ class AuthenticatorFacade
                 , \Poirot\Std\flatten($options)
             ));
 
-        return $options;
+        $guardClass = \Poirot\Std\emptyCoalesce(@$options['class']);
+        if (!$guardClass)
+            throw new \InvalidArgumentException(sprintf(
+                'Unknown Guard Config.', \Poirot\Std\flatten($options)
+            ));
+
+        if (is_string($guardClass))
+            $guardClass = new $guardClass;
+
+        if (!$guardClass instanceof iGuard)
+            throw new \InvalidArgumentException(sprintf(
+                'Guard must instance of iGuard; given: (%s).', \Poirot\Std\flatten($options['class'])
+            ));
+
+        $guardOptions = \Poirot\Std\emptyCoalesce(@$options['options']);
+        if ($guardOptions) {
+            if (!$guardClass instanceof ipConfigurable)
+                throw new \Exception(sprintf('Unknown Guard Configurable (%s).', \Poirot\Std\flatten($guardClass)));
+
+            // Prepare Guard Options To Understandable To Guard Class
+            $guardOptions = $this->_guardPrepareConfig($guardOptions);
+            $guardClass->with($guardOptions, true);
+        }
+
+        return $guardClass;
     }
 
+    protected function _guardPrepareConfig($options)
+    {
+        # authenticator
+        $authenticator = \Poirot\Std\emptyCoalesce(@$options['authenticator']);
+        if ( $authenticator && is_string($authenticator) ) {
+            // authenticator as string considered for registered name
+            // Lets Instance Validation Handle On Guard Setter Method
+            $authenticator = $this->authenticator($authenticator);
+            $options['authenticator'] = $authenticator;
+        }
+
+        # authorize
+        $authorize = \Poirot\Std\emptyCoalesce(@$options['authorize']);
+
+        if ( $authorize && ( is_array($authorize) || $authorize instanceof \Traversable ) ) {
+            // authorize as array
+            $class = \Poirot\Std\emptyCoalesce(@$authorize['class']);
+            if (!$class)
+                throw new \InvalidArgumentException(sprintf(
+                    'Unknown Authorize Config.', \Poirot\Std\flatten($authorize)
+                ));
+
+            if (is_string($class))
+                $class = new $class;
+
+            $classOptions = \Poirot\Std\emptyCoalesce(@$authorize['options']);
+            if ($classOptions) {
+                if (!$class instanceof ipConfigurable)
+                    throw new \Exception(sprintf('Unknown Authorize Configurable (%s).', \Poirot\Std\flatten($class)));
+
+                $class->with($classOptions, true);
+            }
+
+            // Lets Instance Validation Handle On Guard Setter Method
+            $authorize = $class;
+            $options['authorize'] = $authorize;
+        }
+
+        return $options;
+    }
 }

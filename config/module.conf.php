@@ -1,6 +1,7 @@
 <?php
 return array(
     Module\Authorization\Module::CONF_KEY => array(
+        
         // Define Authenticators
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS 
         => array(
@@ -31,8 +32,23 @@ return array(
             ),
 
             // Authenticator Names Are Unique
-
-
+            // ...
         ),
+
+        
+        // Define Guards
+        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => array(
+            'restrict_ip' => array(
+                'class'   => \Module\Authorization\Guard\GuardRestrictIP::class,
+                'options' => array(
+                    // Setting Options Provided for Guard
+                    'block_list' => array(
+                        '172.19.0.1',
+                    ),
+                ),
+            ),
+        ),
+        
+        
     ),
 );
