@@ -9,8 +9,6 @@ use Poirot\Events\Interfaces\iEvent;
 
 use Poirot\Std\ConfigurableSetter;
 
-// TODO Implement Authenticator Guard that allow hasAuthenticated (fulfilled identity access)
-
 abstract class aGuard
     extends ConfigurableSetter
     implements iGuard

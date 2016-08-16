@@ -5,10 +5,8 @@ use Module\Authorization\Interfaces\iGuard;
 
 use Poirot\AuthSystem\Authenticate\Authenticator;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
-use Poirot\AuthSystem\Authorize\Interfaces\iAuthorize;
 
 use Poirot\Std\aConfigurable;
-use Poirot\Std\Interfaces\Pact\ipConfigurable;
 
 
 class AuthenticatorFacade
@@ -151,31 +149,15 @@ class AuthenticatorFacade
                 , \Poirot\Std\flatten($options)
             ));
 
-        $guardClass = \Poirot\Std\emptyCoalesce(@$options['class']);
-        if (!$guardClass)
-            throw new \InvalidArgumentException(sprintf(
-                'Unknown Guard Config.', \Poirot\Std\flatten($options)
-            ));
-
-        if (is_string($guardClass))
-            $guardClass = new $guardClass;
-
-        if (!$guardClass instanceof iGuard)
-            throw new \InvalidArgumentException(sprintf(
-                'Guard must instance of iGuard; given: (%s).', \Poirot\Std\flatten($options['class'])
-            ));
-
-        $guardOptions = \Poirot\Std\emptyCoalesce(@$options['options']);
+        $guardOptions = \Poirot\Std\emptyCoalesce(@$options['_class_']['options']);
         if ($guardOptions) {
-            if (!$guardClass instanceof ipConfigurable)
-                throw new \Exception(sprintf('Unknown Guard Configurable (%s).', \Poirot\Std\flatten($guardClass)));
-
             // Prepare Guard Options To Understandable To Guard Class
-            $guardOptions = $this->_guardPrepareConfig($guardOptions);
-            $guardClass->with($guardOptions, true);
+            $options['_class_']['options'] = $this->_guardPrepareConfig($guardOptions);
         }
 
-        return $guardClass;
+        /** @var iGuard $instance */
+        $instance = \Poirot\Config\instanceInitialized($options);
+        return $instance;
     }
 
     protected function _guardPrepareConfig($options)
@@ -188,34 +170,7 @@ class AuthenticatorFacade
             $authenticator = $this->authenticator($authenticator);
             $options['authenticator'] = $authenticator;
         }
-
-        # authorize
-        $authorize = \Poirot\Std\emptyCoalesce(@$options['authorize']);
-
-        if ( $authorize && ( is_array($authorize) || $authorize instanceof \Traversable ) ) {
-            // authorize as array
-            $class = \Poirot\Std\emptyCoalesce(@$authorize['class']);
-            if (!$class)
-                throw new \InvalidArgumentException(sprintf(
-                    'Unknown Authorize Config.', \Poirot\Std\flatten($authorize)
-                ));
-
-            if (is_string($class))
-                $class = new $class;
-
-            $classOptions = \Poirot\Std\emptyCoalesce(@$authorize['options']);
-            if ($classOptions) {
-                if (!$class instanceof ipConfigurable)
-                    throw new \Exception(sprintf('Unknown Authorize Configurable (%s).', \Poirot\Std\flatten($class)));
-
-                $class->with($classOptions, true);
-            }
-
-            // Lets Instance Validation Handle On Guard Setter Method
-            $authorize = $class;
-            $options['authorize'] = $authorize;
-        }
-
+        
         return $options;
     }
 }

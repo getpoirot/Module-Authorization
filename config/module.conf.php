@@ -14,19 +14,32 @@ return array(
                 #O# identifier => iIdentifier | (array) options of aIdentifier
                 'identifier' => array(
                     // identifier like: session, http digest
-                    #'class'  => \Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpDigestAuth::class,
-                    'class'   => '\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpDigestAuth',
-                    'options' => array(
-                        // ...
+                    '_class_'   => array(
+                        #\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
+                        '\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth',
+                        'options' => array(
+                            #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
+                            'credential_adapter' => array(
+                                '_class_' => array(
+                                    'Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
+                                    'options' => array(
+                                        'pwd_file_path' => __DIR__.'/../data/users.pws',
+                                    )
+                                )
+                            )
+                        ),
                     ),
+
                 ),
                 #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
                 'adapter'    => array(
                     // credential adapter, must fulfill identity of identifier * optional
-                    #'class' => \Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile::class,
-                    'class'   => '\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
-                    'options' => array(
-                        'pwd_file_path' => __DIR__.'/../data/users.pws',
+                    '_class_'   => array(
+                        #\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile::class,
+                        '\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
+                        'options' => array(
+                            'pwd_file_path' => __DIR__.'/../data/users.pws',
+                        ),
                     ),
                 ),
             ),
@@ -39,16 +52,33 @@ return array(
         // Define Guards
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => array(
             'restrict_ip' => array(
-                'class'   => \Module\Authorization\Guard\GuardRestrictIP::class,
-                'options' => array(
-                    // Setting Options Provided for Guard
-                    'block_list' => array(
-                        '172.19.0.1',
+                '_class_' => array(
+                    \Module\Authorization\Guard\GuardRestrictIP::class,
+                    'options' => array(
+                        // Setting Options Provided for Guard
+                        'block_list' => array(
+                            // '172.19.0.1',
+                        ),
                     ),
-                ),
+                )
+            ),
+            'guard_routes' => array(
+                '_class_' => array(
+                    \Module\Authorization\Guard\GuardRoute::class,
+                    'options' => array(
+                        'authenticator' => \Module\Authorization\Module\AuthenticatorFacade::AUTHENTICATOR_DEFAULT,
+                    ),
+                )
             ),
         ),
-        
-        
+    ),
+
+    // View Renderer Options
+    \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
+    => array(
+        \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => array(
+            // Display Authentication Exceptions Specific Template
+            \Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication::class => 'error/401',
+        ),
     ),
 );
