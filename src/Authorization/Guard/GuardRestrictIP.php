@@ -8,7 +8,8 @@ use Poirot\Application\Sapi\Event\EventHeapOfSapi;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAccessDenied;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 
-use Poirot\AuthSystem\Authorize\Interfaces\iAuthorizeResource;
+use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
+use Poirot\AuthSystem\Authorize\Interfaces\iResourceAuthorize;
 
 use Poirot\Events\Interfaces\iEvent;
 
@@ -31,11 +32,11 @@ class GuardRestrictIP
      *   admin route
      *
      * @param IdentityAuthorize  $role
-     * @param iAuthorizeResource $resource
+     * @param iResourceAuthorize $resource
      *
      * @return boolean
      */
-    function isAllowed(/*iIdentity*/ $role = null, /*iAuthorizeResource*/ $resource = null)
+    function isAllowed(iIdentity $role = null, iResourceAuthorize $resource = null)
     {
         if ($role === null) {
             // Recognize Role Itself

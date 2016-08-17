@@ -29,8 +29,8 @@ return array(
                             )
                         ),
                     ),
-
                 ),
+                
                 #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
                 'adapter'    => array(
                     // credential adapter, must fulfill identity of identifier * optional
@@ -42,6 +42,7 @@ return array(
                         ),
                     ),
                 ),
+                
             ),
 
             // Authenticator Names Are Unique
@@ -62,14 +63,17 @@ return array(
                     ),
                 )
             ),
-            'guard_routes' => array(
+            /*'oauth_routes' => array(
                 '_class_' => array(
                     \Module\Authorization\Guard\GuardRoute::class,
                     'options' => array(
                         'authenticator' => \Module\Authorization\Module\AuthenticatorFacade::AUTHENTICATOR_DEFAULT,
+                        'routes_denied' => array(
+                            'main/oauth/authorize',
+                        ),
                     ),
                 )
-            ),
+            ),*/
         ),
     ),
 

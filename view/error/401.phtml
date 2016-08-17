@@ -1,4 +1,10 @@
+<?php
+/**
+ * @var Exception $exception
+ */
+$exception = $exception->getPrevious();
+?>
 <section id="error" class="container">
-    <h1>Unauthorized, Access is denied.</h1>
+    <h1>Unauthorized, <?php $exception->getMessage(); ?></h1>
     <p>You do not have permission to view the requested page. <br/> You may try to reauthenticate to access the requested information or you can cancel your request and return to the previous page.</p>
 </section>

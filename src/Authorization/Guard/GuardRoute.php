@@ -2,16 +2,20 @@
 namespace Module\Authorization\Guard;
 
 use Module\Authorization\Guard\RestrictIP\IdentityAuthorize;
+use Module\Authorization\Guard\Route\ResourceAuthorize;
 
 use Poirot\Application\Sapi\Event\EventHeapOfSapi;
+use Poirot\Application\SapiHttp;
 
 use Poirot\AuthSystem\Authenticate\Exceptions\exAccessDenied;
-use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
-
+use Poirot\AuthSystem\Authenticate\Exceptions\exNotAuthenticated;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
-use Poirot\AuthSystem\Authorize\Interfaces\iAuthorizeResource;
+use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
+use Poirot\AuthSystem\Authorize\Interfaces\iResourceAuthorize;
 
 use Poirot\Events\Interfaces\iEvent;
+
+use Poirot\Router\Route\RouteSegment;
 
 use Poirot\Std\ConfigurableSetter;
 
@@ -20,6 +24,9 @@ class GuardRoute
 {
     /** @var iAuthenticator */
     protected $authenticator;
+    protected $routesDenied = array(
+        # 'main/ouath/*',
+    );
 
 
     /**
@@ -31,19 +38,30 @@ class GuardRoute
      *   on other route names, and only AdminUser has access on
      *   admin route
      *
-     * @param IdentityAuthorize  $role
-     * @param iAuthorizeResource $resource
+     * @param IdentityAuthorize $role
+     * @param ResourceAuthorize $resource
      *
      * @return boolean
      */
-    function isAllowed(/*iIdentity*/ $role = null, /*iAuthorizeResource*/ $resource = null)
+    function isAllowed(iIdentity $role = null, iResourceAuthorize $resource = null)
     {
-        $isAllowed = false;
+        if ($resource !== null) {
+            // check given route is banned for authorized users?
+            $route = $resource->getRoute();
+            $route = $route->getName();
+
+            if (!$this->_verifyIsBannedRoute($route))
+                // Allow access to free zone route
+                return true;
+        }
 
         if ($role === null)
-            $role = $isAllowed = $this->authenticator->hasAuthenticated();
-        
-        return $isAllowed;
+            $role = $this->authenticator->hasAuthenticated();
+
+        if ($role === false)
+            throw new exNotAuthenticated($this->authenticator);
+
+        return $role->isFulfilled();
     }
 
     /**
@@ -63,25 +81,14 @@ class GuardRoute
 
         $self = $this;
 
-        $event->on(EventHeapOfSapi::EVENT_APP_ROUTE_MATCH, function() use ($self) {
-            $self->_assertAccess();
-        });
+        $event->on(EventHeapOfSapi::EVENT_APP_ROUTE_MATCH
+            , function($route_match = null) use ($self) {
+                $self->_assertAccess($route_match);
+            }
+            , SapiHttp::PRIO_LISTENER_MATCH_ROUTE * 10 // run after route match
+        );
 
         return $this;
-    }
-
-
-    // ..
-
-    /**
-     * Assert Access
-     *
-     * @throws exAuthentication Not allowed
-     */
-    protected function _assertAccess()
-    {
-        if (!$this->isAllowed())
-            throw new exAccessDenied($this->authenticator);
     }
 
 
@@ -99,4 +106,76 @@ class GuardRoute
         $this->authenticator = $authenticator;
         return $this;
     }
+
+    /**
+     * Set Routes By Name That Need Authorized
+     *
+     * @param array $routesDenied
+     *
+     * @return $this
+     */
+    function setRoutesDenied(array $routesDenied)
+    {
+        foreach ($routesDenied as $route)
+            $this->addRouteDenied($route);
+
+        return $this;
+    }
+
+    /**
+     * Add Denied Route
+     *
+     * @param string $routeName
+     *
+     * @return $this
+     */
+    function addRouteDenied($routeName)
+    {
+        array_push($this->routesDenied, (string) $routeName);
+        return $this;
+    }
+
+
+    // ..
+
+    /**
+     * Assert Access
+     *
+     * @param RouteSegment $route_match
+     */
+    protected function _assertAccess($route_match)
+    {
+        if (!$route_match)
+            // only check for route access
+            return;
+
+        $resource = new ResourceAuthorize();
+        $resource->setRoute($route_match);
+        if (!$this->isAllowed(null, $resource)) // determine current authenticated user
+            throw new exAccessDenied($this->authenticator);
+    }
+
+    /**
+     * Check given route name is in banned list
+     *
+     * @param string $route
+     *
+     * @return bool
+     */
+    function _verifyIsBannedRoute($route)
+    {
+        $r = false;
+
+        $route = explode('/', $route);
+        foreach ($this->routesDenied as $routeDenied) {
+            $compare = ltrim(str_replace($route , '', $routeDenied), '/');
+            if ($compare === '' || $compare === '*') {
+                $r = true;
+                break;
+            }
+        }
+
+        return $r;
+    }
+
 }
