@@ -149,10 +149,10 @@ class AuthenticatorFacade
                 , \Poirot\Std\flatten($options)
             ));
 
-        $guardOptions = \Poirot\Std\emptyCoalesce(@$options['_class_']['options']);
+        $guardOptions = \Poirot\Std\emptyCoalesce(@$options[\Poirot\Config\INIT_INS]['options']);
         if ($guardOptions) {
             // Prepare Guard Options To Understandable To Guard Class
-            $options['_class_']['options'] = $this->_guardPrepareConfig($guardOptions);
+            $options[\Poirot\Config\INIT_INS]['options'] = $this->_guardPrepareConfig($guardOptions);
         }
 
         /** @var iGuard $instance */

@@ -14,13 +14,13 @@ return array(
                 #O# identifier => iIdentifier | (array) options of aIdentifier
                 'identifier' => array(
                     // identifier like: session, http digest
-                    '_class_'   => array(
+                    \Poirot\Config\INIT_INS   => array(
                         #\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
                         '\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth',
                         'options' => array(
                             #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
                             'credential_adapter' => array(
-                                '_class_' => array(
+                                \Poirot\Config\INIT_INS => array(
                                     'Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
                                     'options' => array(
                                         'pwd_file_path' => __DIR__.'/../data/users.pws',
@@ -34,7 +34,7 @@ return array(
                 #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
                 'adapter'    => array(
                     // credential adapter, must fulfill identity of identifier * optional
-                    '_class_'   => array(
+                    \Poirot\Config\INIT_INS   => array(
                         #\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile::class,
                         '\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
                         'options' => array(
@@ -53,7 +53,7 @@ return array(
         // Define Guards
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => array(
             'restrict_ip' => array(
-                '_class_' => array(
+                \Poirot\Config\INIT_INS => array(
                     \Module\Authorization\Guard\GuardRestrictIP::class,
                     'options' => array(
                         // Setting Options Provided for Guard
@@ -64,7 +64,7 @@ return array(
                 )
             ),
             /*'oauth_routes' => array(
-                '_class_' => array(
+                \Poirot\Config\INIT_INS => array(
                     \Module\Authorization\Guard\GuardRoute::class,
                     'options' => array(
                         'authenticator' => \Module\Authorization\Module\AuthenticatorFacade::AUTHENTICATOR_DEFAULT,
