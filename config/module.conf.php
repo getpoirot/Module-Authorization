@@ -17,12 +17,12 @@ return array(
                     \Poirot\Config\INIT_INS   => array(
                         #\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
                         '\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth',
-                        'options' => array(
+                        \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
                             #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
                             'credential_adapter' => array(
                                 \Poirot\Config\INIT_INS => array(
                                     'Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
-                                    'options' => array(
+                                    \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
                                         'pwd_file_path' => __DIR__.'/../data/users.pws',
                                     )
                                 )
@@ -37,7 +37,7 @@ return array(
                     \Poirot\Config\INIT_INS   => array(
                         #\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile::class,
                         '\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
-                        'options' => array(
+                        \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
                             'pwd_file_path' => __DIR__.'/../data/users.pws',
                         ),
                     ),
@@ -55,10 +55,10 @@ return array(
             'restrict_ip' => array(
                 \Poirot\Config\INIT_INS => array(
                     \Module\Authorization\Guard\GuardRestrictIP::class,
-                    'options' => array(
+                    \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
                         // Setting Options Provided for Guard
                         'block_list' => array(
-                            // '172.19.0.1',
+                            //  '172.19.0.1',
                         ),
                     ),
                 )

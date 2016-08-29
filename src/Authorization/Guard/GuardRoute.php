@@ -55,8 +55,10 @@ class GuardRoute
                 return true;
         }
 
-        if ($role === null)
-            $role = $this->authenticator->hasAuthenticated();
+        if ($role === null) {
+            if ($role = $this->authenticator->hasAuthenticated())
+                $role = $role->withIdentity();
+        }
 
         if ($role === false)
             throw new exNotAuthenticated($this->authenticator);
