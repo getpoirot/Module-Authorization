@@ -5,6 +5,7 @@ use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
 
 use Poirot\Std\Struct\aDataOptions;
 
+
 class IdentityAuthorize 
     extends aDataOptions
     implements iIdentity

@@ -5,6 +5,7 @@ use Poirot\AuthSystem\Authorize\Interfaces\iResourceAuthorize;
 use Poirot\Router\Interfaces\iRoute;
 use Poirot\Std\Struct\aDataOptions;
 
+
 class ResourceAuthorize
     extends aDataOptions
     implements iResourceAuthorize
