@@ -10,4 +10,9 @@
         "poirot/skeleton": "dev-devel"
         , "poirot/authsystem": "dev-devel"
     }
+    , "autoload"  : {
+        "psr-4": {
+            "Module\\Authorization\\": "src/Authorization/"
+        }
+    }
 }
