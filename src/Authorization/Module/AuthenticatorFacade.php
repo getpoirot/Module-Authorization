@@ -150,14 +150,14 @@ class AuthenticatorFacade
                 , \Poirot\Std\flatten($options)
             ));
 
-        $guardOptions = \Poirot\Std\emptyCoalesce(@$options[\Poirot\Config\INIT_INS][ServiceInstance::KEY_OPTIONS]);
+        $guardOptions = \Poirot\Std\emptyCoalesce(@$options[\Poirot\Ioc\INST][ServiceInstance::KEY_OPTIONS]);
         if ($guardOptions) {
             // Prepare Guard Options To Understandable To Guard Class
-            $options[\Poirot\Config\INIT_INS][ServiceInstance::KEY_OPTIONS] = $this->_guardPrepareConfig($guardOptions);
+            $options[\Poirot\Ioc\INST][ServiceInstance::KEY_OPTIONS] = $this->_guardPrepareConfig($guardOptions);
         }
 
         /** @var iGuard $instance */
-        $instance = \Poirot\Config\instanceInitialized($options);
+        $instance = \Poirot\Ioc\newInitIns($options);
         return $instance;
     }
 
