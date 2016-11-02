@@ -78,9 +78,9 @@ return array(
     ),
 
     // View Renderer Options
-    \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
+    \Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
     => array(
-        \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => array(
+        \Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => array(
             // Display Authentication Exceptions Specific Template
             \Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication::class => 'error/401',
         ),
