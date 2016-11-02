@@ -83,11 +83,11 @@ class GuardRoute
 
         $self = $this;
 
-        $event->on(EventHeapOfSapi::EVENT_APP_ROUTE_MATCH
+        $event->on(EventHeapOfSapi::EVENT_APP_MATCH_REQUEST
             , function($route_match = null) use ($self) {
                 $self->_assertAccess($route_match);
             }
-            , SapiHttp::PRIO_LISTENER_MATCH_ROUTE * 10 // run after route match
+            , SapiHttp::PRY_LISTENER_MATCH_REQUEST * 10 // run after route match
         );
 
         return $this;

@@ -65,7 +65,7 @@ class GuardRestrictIP
 
         $self = $this;
 
-        $event->on(EventHeapOfSapi::EVENT_APP_ROUTE_MATCH, function() use ($self) {
+        $event->on(EventHeapOfSapi::EVENT_APP_MATCH_REQUEST, function() use ($self) {
             $self->_assertAccess();
         });
 
