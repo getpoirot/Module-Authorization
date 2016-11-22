@@ -98,7 +98,6 @@ class Module implements iSapiModule
         /** @var AuthenticatorFacade $authenticatorFacade */
         $authenticatorFacade = $services->get('/module/authorization');
 
-
         ## Build Authorization Facade With Merged Configs
         if ($config)
             $authenticatorFacade->with($config);

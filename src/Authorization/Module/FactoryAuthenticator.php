@@ -68,6 +68,7 @@ class FactoryAuthenticator
     static function of($options)
     {
         $options    = \Poirot\Ioc\newInitIns($options);
+
         $realm      = \Poirot\Std\emptyCoalesce(@$options['realm']);
         $identifier = \Poirot\Std\emptyCoalesce(@$options['identifier']);
         $adapter    = \Poirot\Std\emptyCoalesce(@$options['adapter']);
