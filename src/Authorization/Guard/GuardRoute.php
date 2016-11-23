@@ -1,6 +1,7 @@
 <?php
 namespace Module\Authorization\Guard;
 
+
 use Module\Authorization\Guard\RestrictIP\IdentityAuthorize;
 use Module\Authorization\Guard\Route\ResourceAuthorize;
 
@@ -17,7 +18,6 @@ use Poirot\Events\Interfaces\iEvent;
 
 use Poirot\Router\Route\RouteSegment;
 
-use Poirot\Std\ConfigurableSetter;
 
 class GuardRoute
     extends aGuard
@@ -38,8 +38,8 @@ class GuardRoute
      *   on other route names, and only AdminUser has access on
      *   admin route
      *
-     * @param IdentityAuthorize $role
-     * @param ResourceAuthorize $resource
+     * @param IdentityAuthorize|iIdentity          $role
+     * @param ResourceAuthorize|iResourceAuthorize $resource
      *
      * @return boolean
      */

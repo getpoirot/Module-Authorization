@@ -67,7 +67,12 @@ class FactoryAuthenticator
      */
     static function of($options)
     {
+        /// TODO move newInitIns to more general place; in exp. when merged config loading complete or something
+        //-      all classes and services get instanciated options
         $options    = \Poirot\Ioc\newInitIns($options);
+        if ($options instanceof iAuthenticator)
+            return $options;
+
 
         $realm      = \Poirot\Std\emptyCoalesce(@$options['realm']);
         $identifier = \Poirot\Std\emptyCoalesce(@$options['identifier']);
