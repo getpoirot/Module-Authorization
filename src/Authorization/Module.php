@@ -113,7 +113,7 @@ class Module implements iSapiModule
         /** @var LoaderNamespaceStack $resolver */
         $resolver = $viewModelResolver->loader('Poirot\Loader\LoaderNamespaceStack');
         $resolver->with(array(
-            'error/401' => __DIR__. '/../../view/error/401',
+            'error/authorization/' => __DIR__. '/../../view/error/authorization', // looks for errors in this folder
         ));
     }
 }

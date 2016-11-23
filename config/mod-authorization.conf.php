@@ -82,7 +82,7 @@ return array(
     => array(
         \Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => array(
             // Display Authentication Exceptions Specific Template
-            \Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication::class => 'error/401',
+            \Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication::class => 'error/authorization/401',
         ),
     ),
 );
