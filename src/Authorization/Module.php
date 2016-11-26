@@ -6,6 +6,7 @@ use Poirot\Application\aSapi;
 use Poirot\Application\Interfaces\Sapi;
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\Sapi\Event\EventHeapOfSapi;
+use Poirot\Application\Sapi\Server\Http\RenderStrategy\aListenerRenderStrategy;
 use Poirot\Application\SapiCli;
 use Poirot\Application\SapiHttp;
 
@@ -76,6 +77,8 @@ class Module implements iSapiModule
         $events->on(
             EventHeapOfSapi::EVENT_APP_ERROR
             , new ListenerHandleAuthException
+            // before render strategy error handling
+            , aListenerRenderStrategy::PRIORITY_APP_ERROR_HANDLE_RENDERER + 100
         );
     }
 
