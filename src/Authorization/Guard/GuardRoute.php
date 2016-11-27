@@ -160,20 +160,27 @@ class GuardRoute
     /**
      * Check given route name is in banned list
      *
-     * @param string $route
+     * @param string $currentRoute
      *
      * @return bool
      */
-    function _verifyIsBannedRoute($route)
+    function _verifyIsBannedRoute($currentRoute)
     {
         $r = false;
 
-        $route = explode('/', $route);
-        foreach ($this->routesDenied as $routeDenied) {
-            $compare = ltrim(str_replace($route , '', $routeDenied), '/');
-            if ($compare === '' || $compare === '*') {
-                $r = true;
-                break;
+        $currentRoute = rtrim($currentRoute, '/');
+        foreach ($this->routesDenied as $deniedRoute) {
+            $deniedRoute = rtrim($deniedRoute, '/');
+            $allowLeft = false;
+            if (substr($deniedRoute, -1) == '*') {
+                // remove star
+                $allowLeft = true;
+                $deniedRoute = substr($deniedRoute, 0, strlen($deniedRoute) -1 );
+            }
+
+            if ( ($left = str_replace($deniedRoute, '', $currentRoute)) !== $currentRoute ) {
+                if ($allowLeft || $left == '')
+                    return true;
             }
         }
 
