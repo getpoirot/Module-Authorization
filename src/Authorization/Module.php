@@ -106,6 +106,9 @@ class Module implements iSapiModule
             $authenticatorFacade->with($config);
 
 
+        // TODO from events,
+        // may has some limitation for modules that want to change some settings and do this on resolveRegisteredServices and authenticate module load before that by modules dependencies required
+
         ## Attach Guards Into Events
         foreach ($authenticatorFacade->listGuards() as $guardName)
             $authenticatorFacade->guard($guardName)
