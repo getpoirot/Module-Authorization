@@ -1,88 +1,41 @@
 <?php
+use Module\Authorization\Guard\GuardRestrictIP;
+use Module\Authorization\Services\Authenticators\ServiceAuthenticatorDefault;
+use Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError;
+use Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy;
+use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
+
+
 return array(
-    Module\Authorization\Module::CONF_KEY => array(
-        
-        // Define Authenticators
-        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS 
-        => array(
-
-            ## authenticator_name => iAuthenticator | (array) options
-            \Module\Authorization\Module\AuthenticatorFacade::AUTHENTICATOR_DEFAULT 
-            => array(
-                // default authentication realm; usually realms are considered as unique!!
-                'realm'      => \Poirot\AuthSystem\Authenticate\Identifier\aIdentifier::DEFAULT_REALM,
-                #O# identifier => iIdentifier | (array) options of aIdentifier
-                'identifier' => array(
-                    // identifier like: session, http digest
-                    \Poirot\Ioc\INST   => array(
-                        #\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
-                        '\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth',
-                        \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
-                            #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
-                            'credential_adapter' => array(
-                                \Poirot\Ioc\INST => array(
-                                    'Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
-                                    \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
-                                        'pwd_file_path' => __DIR__.'/../data/users.pws',
-                                    )
-                                )
-                            )
-                        ),
-                    ),
-                ),
-                
-                #O# adapter => iIdentityCredentialRepo | (array) options of CredentialRepo
-                'adapter'    => array(
-                    // credential adapter, must fulfill identity of identifier * optional
-                    \Poirot\Ioc\INST   => array(
-                        #\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile::class,
-                        '\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
-                        \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
-                            'pwd_file_path' => __DIR__.'/../data/users.pws',
-                        ),
-                    ),
-                ),
-                
+    \Module\Authorization\Module::CONF_KEY => array(
+        'authenticators' => array(
+            'services' => array(
+                // Authenticators Services
+                'default' => ServiceAuthenticatorDefault::class,
             ),
-
-            // Authenticator Names Are Unique
-            // ...
         ),
-
-        
-        // Define Guards
-        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => array(
-            'restrict_ip' => array(
-                \Poirot\Ioc\INST => array(
-                    \Module\Authorization\Guard\GuardRestrictIP::class,
-                    \Poirot\Ioc\Container\Service\ServiceInstance::KEY_OPTIONS => array(
-                        // Setting Options Provided for Guard
-                        'block_list' => array(
-                            //  '172.19.0.1',
-                        ),
-                    ),
-                )
+        'guards' => array(
+            'services' => array(
+                // Guards Services
             ),
-            /*'oauth_routes' => array(
-                \Poirot\Config\INIT_INS => array(
-                    \Module\Authorization\Guard\GuardRoute::class,
-                    'options' => array(
-                        'authenticator' => \Module\Authorization\Module\AuthenticatorFacade::AUTHENTICATOR_DEFAULT,
-                        'routes_denied' => array(
-                            'main/oauth/authorize',
-                        ),
-                    ),
-                )
-            ),*/
+        ),
+        'options' => array(
+            // Settings Used By Services While Factory
+            GuardRestrictIP::class => array(
+                // Setting Options Provided for Guard
+                'block_list' => array(
+                    //  '172.19.0.1',
+                ),
+            ),
         ),
     ),
 
     // View Renderer Options
-    \Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
+    ListenersRenderDefaultStrategy::CONF_KEY
     => array(
-        \Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => array(
+        ListenerError::CONF_KEY => array(
             // Display Authentication Exceptions Specific Template
-            \Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication::class => 'error/authorization/401',
+            exAuthentication::class => 'error/authorization/401',
         ),
     ),
 );

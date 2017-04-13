@@ -1,7 +1,8 @@
 <?php
-namespace Module\Authorization\Module;
+namespace Module\Authorization\Application\SapiHttp;
 
 use Poirot\Application\Sapi\Server\Http\RenderStrategy\aListenerRenderStrategy;
+use Poirot\Application\SapiHttp;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 
 use Poirot\Events\Listener\aListener;
@@ -12,8 +13,9 @@ class ListenerHandleAuthException
 {
     /**
      * @param \Exception $exception
+     * @param SapiHttp $sapi
      *
-     * @return void|array
+     * @return array|void
      */
     function __invoke($exception = null, $sapi = null)
     {
