@@ -15,7 +15,7 @@
             "Module\\Authorization\\": "src/Authorization/"
         }
         ,"files": [
-            "src/_ioc-facade.php"
+            "src/Authorization/_ioc-facade.php"
         ]
     }
 }
