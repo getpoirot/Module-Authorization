@@ -77,8 +77,6 @@ class Module implements iSapiModule
     /**
      * @inheritdoc
      *
-     * - Configure Authenticator Module Facade
-     *
      * @param Container              $services service names must have default value
      * @param aSapi|SapiHttp|SapiCli $sapi
      * @param LoaderAggregate        $viewModelResolver

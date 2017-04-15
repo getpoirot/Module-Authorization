@@ -1,5 +1,5 @@
 <?php
-namespace Module\Authorization\Module;
+namespace Module\Authorization\Actions;
 
 
 use Module\Authorization\Interfaces\iGuard;
@@ -36,12 +36,19 @@ class AuthenticatorAction
     }
 
     /**
+     *
+     * @param null|string $authenticator Authenticator name
+     *
      * @return $this
      */
-    function __invoke()
+    function __invoke($authenticator = null)
     {
+        if ($authenticator !== null)
+            return $this->authenticator($authenticator);
+
         return $this;
     }
+
 
     /**
      * Retrieve Registered Authenticator Service By Name

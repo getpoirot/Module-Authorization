@@ -1,12 +1,11 @@
 <?php
-use Poirot\Ioc\Container\BuildContainer;
-
+use Module\Authorization\Actions\ServiceAuthenticatorAction;
 
 /**
  * @see \Poirot\Ioc\Container\BuildContainer
  */
 return array(
     'services' => array(
-        'Authenticator' => \Module\Authorization\Module\ServiceAuthenticatorAction::class,
+        'Authenticator' => ServiceAuthenticatorAction::class,
     ),
 );

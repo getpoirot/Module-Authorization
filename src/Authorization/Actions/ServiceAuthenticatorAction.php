@@ -1,5 +1,5 @@
 <?php
-namespace Module\Authorization\Module;
+namespace Module\Authorization\Actions;
 
 use Poirot\Ioc\Container\Service\aServiceContainer;
 
@@ -18,8 +18,8 @@ class ServiceAuthenticatorAction
      */
     function newService()
     {
-        $auths  = $this->services()->get('/module/authorization/ContainerAuthenticators');
-        $guards = $this->services()->get('/module/authorization/ContainerGuards');
+        $auths  = \Module\Authorization\Services\IOC::ContainerAuthenticators();
+        $guards = \Module\Authorization\Services\IOC::ContainerGuards();
 
         $action = new AuthenticatorAction($auths, $guards);
         return $action;

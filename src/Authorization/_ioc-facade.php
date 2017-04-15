@@ -1,10 +1,8 @@
 <?php
 namespace Module\Authorization\Actions
 {
-    use Module\Authorization\Module\AuthenticatorAction;
-
     /**
-     * @method static AuthenticatorAction Authenticator()
+     * @method static AuthenticatorAction Authenticator($authenticator = null)
      */
     class IOC extends \IOC
     { }
@@ -14,6 +12,8 @@ namespace Module\Authorization\Actions
 namespace Module\Authorization\Services
 {
     /**
+     * @method static ContainerAuthenticatorsCapped ContainerAuthenticators()
+     * @method static ContainerGuardsCapped         ContainerGuards()
      */
     class IOC extends \IOC
     { }
