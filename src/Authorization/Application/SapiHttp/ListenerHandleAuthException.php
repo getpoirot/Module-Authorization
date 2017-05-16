@@ -1,10 +1,9 @@
 <?php
 namespace Module\Authorization\Application\SapiHttp;
 
-use Poirot\Application\Sapi\Server\Http\RenderStrategy\aListenerRenderStrategy;
-use Poirot\Application\SapiHttp;
+use Module\HttpRenderer\Services\RenderStrategy\aListenerRenderStrategy;
+use Poirot\Application\aSapi;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
-
 use Poirot\Events\Listener\aListener;
 
 
@@ -13,7 +12,7 @@ class ListenerHandleAuthException
 {
     /**
      * @param \Exception $exception
-     * @param SapiHttp $sapi
+     * @param aSapi $sapi
      *
      * @return array|void
      */
@@ -25,11 +24,11 @@ class ListenerHandleAuthException
             // Just Handle Html Follows; Lets Other Behind; exp. when renderer is json just response error result!!
             return;
 
-        if (!$exception instanceof exAuthentication)
+        if (! $exception instanceof exAuthentication )
             ## unknown error
             return;
 
-        if (!$authenticator = $exception->getAuthenticator())
+        if (! $authenticator = $exception->getAuthenticator() )
             // Not Identifier Handle Error!! Let It Go...
             return;
 

@@ -2,8 +2,8 @@
 use Module\Authorization\Services\Authenticators\ServiceAuthenticatorDefault;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
-use Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError;
-use Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy;
+use Module\HttpRenderer\Services\RenderStrategy\DefaultStrategy\ListenerError;
+use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 
 

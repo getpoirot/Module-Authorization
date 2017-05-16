@@ -1,21 +1,15 @@
 <?php
 namespace Module\Authorization\Guard;
 
-
 use Module\Authorization\Guard\RestrictIP\IdentityAuthorize;
 use Module\Authorization\Guard\Route\ResourceAuthorize;
-
 use Poirot\Application\Sapi\Event\EventHeapOfSapi;
-use Poirot\Application\SapiHttp;
-
 use Poirot\AuthSystem\Authenticate\Exceptions\exAccessDenied;
 use Poirot\AuthSystem\Authenticate\Exceptions\exNotAuthenticated;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
 use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
 use Poirot\AuthSystem\Authorize\Interfaces\iResourceAuthorize;
-
 use Poirot\Events\Interfaces\iEvent;
-
 use Poirot\Router\Route\RouteSegment;
 
 
@@ -87,7 +81,7 @@ class GuardRoute
             , function($route_match = null) use ($self) {
                 $self->_assertAccess($route_match);
             }
-            , SapiHttp::PRY_LISTENER_MATCH_REQUEST * 10 // run after route match
+            , /* //todo use constant */ -10 * 10 // run after route match
         );
 
         return $this;
@@ -147,9 +141,10 @@ class GuardRoute
      */
     protected function _assertAccess($route_match)
     {
-        if (!$route_match)
+        if (! $route_match )
             // only check for route access
             return;
+
 
         $resource = new ResourceAuthorize();
         $resource->setRoute($route_match);

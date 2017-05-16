@@ -1,7 +1,6 @@
 <?php
 namespace Module\Authorization\Actions;
 
-
 use Module\Authorization\Interfaces\iGuard;
 use Module\Authorization\Services\ContainerAuthenticatorsCapped;
 use Module\Authorization\Services\ContainerGuardsCapped;

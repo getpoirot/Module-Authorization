@@ -3,13 +3,10 @@ namespace Module\Authorization;
 
 use Module\Authorization\Application\SapiHttp\ListenerHandleAuthException;
 use Poirot\Application\aSapi;
-use Poirot\Application\Interfaces\Sapi;
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
+use Poirot\Application\Interfaces\Sapi;
 use Poirot\Application\Sapi\Event\EventHeapOfSapi;
 use Poirot\Application\Sapi\Module\ContainerForFeatureActions;
-use Poirot\Application\Sapi\Server\Http\RenderStrategy\aListenerRenderStrategy;
-use Poirot\Application\SapiCli;
-use Poirot\Application\SapiHttp;
 
 use Poirot\Ioc\Container;
 
@@ -44,7 +41,6 @@ class Module implements iSapiModule
         $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
         $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
 
-
         require_once __DIR__.'/_ioc-facade.php';
     }
 
@@ -78,7 +74,7 @@ class Module implements iSapiModule
      * @inheritdoc
      *
      * @param Container              $services service names must have default value
-     * @param aSapi|SapiHttp|SapiCli $sapi
+     * @param aSapi $sapi
      * @param LoaderAggregate        $viewModelResolver
      */
     function resolveRegisteredServices(
@@ -87,7 +83,7 @@ class Module implements iSapiModule
     ) {
         ## ViewScripts To View Resolver:
         /** @var LoaderNamespaceStack $resolver */
-        $resolver = $viewModelResolver->loader('Poirot\Loader\LoaderNamespaceStack');
+        $resolver = $viewModelResolver->loader( LoaderNamespaceStack::class );
         $resolver->with(array(
             'error/authorization/' => __DIR__. '/../../view/error/authorization', // looks for errors in this folder
         ));
@@ -133,7 +129,7 @@ class Module implements iSapiModule
             EventHeapOfSapi::EVENT_APP_ERROR
             , new ListenerHandleAuthException
             // before render strategy error handling
-            , aListenerRenderStrategy::PRIORITY_APP_ERROR_HANDLE_RENDERER + 100
+            , 900
         );
     }
 }

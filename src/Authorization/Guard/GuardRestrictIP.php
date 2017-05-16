@@ -13,7 +13,6 @@ use Poirot\AuthSystem\Authorize\Interfaces\iResourceAuthorize;
 
 use Poirot\Events\Interfaces\iEvent;
 
-use Poirot\Std\ConfigurableSetter;
 
 class GuardRestrictIP
     extends aGuard
@@ -59,12 +58,12 @@ class GuardRestrictIP
      */
     function attachToEvent(iEvent $event)
     {
-        if (\Poirot\isCommandLine())
+        if ( \Poirot\isCommandLine() )
             // Restriction IP Only Work With Http Sapi
             return $this;
 
-        $self = $this;
 
+        $self = $this;
         $event->on(EventHeapOfSapi::EVENT_APP_MATCH_REQUEST, function() use ($self) {
             $self->_assertAccess();
         });
@@ -101,7 +100,7 @@ class GuardRestrictIP
         if ($list instanceof \Traversable)
             $list = \Poirot\Std\cast($list)->toArray();
 
-        if (!is_array($list))
+        if (! is_array($list) )
             throw new \InvalidArgumentException(sprintf(
                 'List must instanceof Traversable or array; given (%s).'
                 , \Poirot\Std\flatten($list)

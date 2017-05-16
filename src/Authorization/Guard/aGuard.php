@@ -9,6 +9,7 @@ use Poirot\Events\Interfaces\iEvent;
 
 use Poirot\Std\ConfigurableSetter;
 
+
 abstract class aGuard
     extends ConfigurableSetter
     implements iGuard
