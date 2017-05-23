@@ -18,15 +18,16 @@ abstract class aGuard
      * Attach To Event
      *
      * note: not throw any exception if event type is unknown!
-     * 
+     *
      * @param iEvent|EventHeapOfSapi $event
      *
      * @return $this
+     * @throws \Exception
      */
     function attachToEvent(iEvent $event)
     {
         // It`s may not implemented!!
         // All Guards May Not Attach To Any Event
-        return $this;
+        throw new \Exception('Not Implemented.');
     }
 }
