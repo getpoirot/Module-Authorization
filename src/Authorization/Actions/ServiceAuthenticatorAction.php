@@ -18,8 +18,8 @@ class ServiceAuthenticatorAction
      */
     function newService()
     {
-        $auths  = \Module\Authorization\Services\Services::ContainerAuthenticators();
-        $guards = \Module\Authorization\Services\Services::ContainerGuards();
+        $auths  = \Module\Authorization\Services::ContainerAuthenticators();
+        $guards = \Module\Authorization\Services::ContainerGuards();
 
         $action = new AuthenticatorAction($auths, $guards);
         return $action;
