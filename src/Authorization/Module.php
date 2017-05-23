@@ -116,9 +116,9 @@ namespace Module\Authorization
         function initSapiEvents(EventHeapOfSapi $events)
         {
             ## Attach Guards Into Events
-            $guards = \Module\Authorization\Actions\IOC::Authenticator()->listGuards();
+            $guards = \Module\Authorization\Actions::Authenticator()->listGuards();
             foreach ($guards as $guardName)
-                \Module\Authorization\Actions\IOC::Authenticator()->guard($guardName)
+                \Module\Authorization\Actions::Authenticator()->guard($guardName)
                     ->attachToEvent($events);
 
 
@@ -134,22 +134,29 @@ namespace Module\Authorization
 }
 
 
-namespace Module\Authorization\Actions
+namespace Module\Authorization
 {
+    use Module\Authorization\Actions\AuthenticatorAction;
+
+
     /**
      * @method static AuthenticatorAction Authenticator($authenticator = null)
      */
-    class IOC extends \IOC
+    class Actions extends \IOC
     { }
 }
 
 
-namespace Module\Authorization\Services
+namespace Module\Authorization
 {
+
+    use Module\Authorization\Services\ContainerAuthenticatorsCapped;
+    use Module\Authorization\Services\ContainerGuardsCapped;
+
     /**
      * @method static ContainerAuthenticatorsCapped ContainerAuthenticators()
      * @method static ContainerGuardsCapped         ContainerGuards()
      */
-    class IOC extends \IOC
+    class Services extends \IOC
     { }
 }
