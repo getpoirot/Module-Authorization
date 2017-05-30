@@ -2,7 +2,6 @@
 use Module\Authorization\Services\Authenticators\ServiceAuthenticatorDefault;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
-use Module\HttpRenderer\Services\RenderStrategy\DefaultStrategy\ListenerError;
 use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 
@@ -27,11 +26,17 @@ return array(
     ),
 
     // View Renderer Options
-    ListenersRenderDefaultStrategy::CONF_KEY
-    => array(
-        ListenerError::CONF_KEY => array(
-            // Display Authentication Exceptions Specific Template
-            exAuthentication::class => 'error/authorization/401',
-        ),
-    ),
+    ListenersRenderDefaultStrategy::CONF_KEY => [
+        'themes' => [
+            'default' => [
+                'layout' => [
+                    'exception' => [
+                        // Display Authentication Exceptions Specific Template
+                        exAuthentication::class => 'error/authorization/401',
+                    ],
+                ],
+            ],
+        ],
+    ],
+
 );
