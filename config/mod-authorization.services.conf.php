@@ -15,10 +15,8 @@ use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
 
 return [
-    'services' =>
-        [
-            // Authenticator Action Services
-            ServiceGuardsContainer::class,
-            ServiceAuthenticatorsContainer::class,
-        ],
+    'services' => [
+        'ContainerGuards'         => ServiceGuardsContainer::class,
+        'ContainerAuthenticators' => ServiceAuthenticatorsContainer::class,
+    ],
 ];

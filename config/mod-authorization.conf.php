@@ -5,25 +5,26 @@ use Module\Authorization\Services\ServiceGuardsContainer;
 use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 
+return [
+    \Module\Authorization\Module::CONF_KEY => [
 
-return array(
-    \Module\Authorization\Module::CONF_KEY => array(
-        ServiceAuthenticatorsContainer::CONF => array(
-            'plugins_container' => array(
-                'services' => array(
+        ServiceAuthenticatorsContainer::CONF => [
+            'plugins_container' => [
+                'services' => [
                     // Authenticators Services
                     'default' => ServiceAuthenticatorDefault::class,
-                ),
-            ),
-        ),
-        ServiceGuardsContainer::CONF => array(
-            'plugins_container' => array(
-                'services' => array(
+                ],
+            ],
+        ],
+
+        ServiceGuardsContainer::CONF => [
+            'plugins_container' => [
+                'services' => [
                     // Guards Services
-                ),
-            ),
-        ),
-    ),
+                ],
+            ],
+        ],
+    ],
 
     // View Renderer Options
     ListenersRenderDefaultStrategy::CONF_KEY => [
@@ -38,5 +39,5 @@ return array(
             ],
         ],
     ],
+];
 
-);

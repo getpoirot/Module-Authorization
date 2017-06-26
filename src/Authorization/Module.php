@@ -1,7 +1,11 @@
 <?php
 namespace Module\Authorization
 {
+
+    use Module\Authorization\Actions\AuthenticatorAction;
     use Module\Authorization\Application\SapiHttp\ListenerHandleAuthException;
+    use Module\Authorization\Services\ServiceAuthenticatorsContainer;
+    use Module\Authorization\Services\ServiceGuardsContainer;
     use Poirot\Application\aSapi;
     use Poirot\Application\Interfaces\Sapi\iSapiModule;
     use Poirot\Application\Interfaces\Sapi;
@@ -19,6 +23,24 @@ namespace Module\Authorization
     use Poirot\Std\Interfaces\Struct\iDataEntity;
 
 
+    /**
+     * - Services:
+     *   > Plugin Container For Authenticators
+     *     @see ServiceAuthenticatorsContainer
+     *
+     *   > Plugin Container For Guards
+     *     @see ServiceGuardsContainer
+     *
+     *
+     * Guards and Authenticators Are Accessible:
+     * \Module\Authorization\Authenticator($authenticator = null)
+     *
+     * @see AuthenticatorAction
+     *
+     *
+     * - Guards Attached To Sapi Events While Application Bootstrapped
+     *
+     */
     class Module implements iSapiModule
         , Sapi\Module\Feature\iFeatureModuleAutoload
         , Sapi\Module\Feature\iFeatureModuleMergeConfig
@@ -64,7 +86,7 @@ namespace Module\Authorization
          */
         function getServices(Container $moduleContainer = null)
         {
-            $conf = \Poirot\Config\load(__DIR__ . '/../../config/mod-authorization.services');
+            $conf = \Poirot\Config\load(__DIR__ . '/../../config/mod-authorization.services', true);
             return $conf;
         }
 
@@ -136,9 +158,6 @@ namespace Module\Authorization
 
 namespace Module\Authorization
 {
-    use Module\Authorization\Actions\AuthenticatorAction;
-
-
     /**
      * @method static AuthenticatorAction Authenticator($authenticator = null)
      */
@@ -149,9 +168,9 @@ namespace Module\Authorization
 
 namespace Module\Authorization
 {
-
     use Module\Authorization\Services\ContainerAuthenticatorsCapped;
     use Module\Authorization\Services\ContainerGuardsCapped;
+
 
     /**
      * @method static ContainerAuthenticatorsCapped ContainerAuthenticators()

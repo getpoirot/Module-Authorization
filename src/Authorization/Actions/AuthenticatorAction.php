@@ -86,7 +86,7 @@ class AuthenticatorAction
      */
     function guard($authorizeOfGuardName)
     {
-        if (!$this->guards->has($authorizeOfGuardName))
+        if (! $this->guards->has($authorizeOfGuardName) )
             throw new \Exception(sprintf('Guard Authorization (%s) Not Registered.', $authorizeOfGuardName));
 
         $guard = $this->guards->get($authorizeOfGuardName);
