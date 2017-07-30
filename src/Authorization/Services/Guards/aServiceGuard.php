@@ -1,5 +1,5 @@
 <?php
-namespace Module\OAuth2\Services\Guards;
+namespace Module\Authorization\Services\Guards;
 
 use Poirot\Ioc\Container\Service\aServiceContainer;
 
