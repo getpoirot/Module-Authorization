@@ -1,7 +1,6 @@
 <?php
 namespace Module\Authorization
 {
-
     use Module\Authorization\Actions\AuthenticatorAction;
     use Module\Authorization\Application\SapiHttp\ListenerHandleAuthException;
     use Module\Authorization\Services\ServiceAuthenticatorsContainer;
@@ -32,10 +31,10 @@ namespace Module\Authorization
      *     @see ServiceGuardsContainer
      *
      *
-     * Guards and Authenticators Are Accessible:
-     * \Module\Authorization\Authenticator($authenticator = null)
+     *   Guards and Authenticators Are Accessible:
+     *   \Module\Authorization\Authenticator($authenticator = null)
      *
-     * @see AuthenticatorAction
+     *   @see AuthenticatorAction
      *
      *
      * - Guards Attached To Sapi Events While Application Bootstrapped
@@ -49,7 +48,7 @@ namespace Module\Authorization
         , Sapi\Module\Feature\iFeatureModuleNestActions
         , Sapi\Module\Feature\iFeatureModuleInitSapiEvents
     {
-        const CONF_KEY = 'module.authorization';
+        const CONF = 'module.authorization';
 
 
         /**

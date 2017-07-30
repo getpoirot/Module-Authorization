@@ -6,7 +6,7 @@ use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 
 return [
-    \Module\Authorization\Module::CONF_KEY => [
+    \Module\Authorization\Module::CONF => [
 
         ServiceAuthenticatorsContainer::CONF => [
             'plugins_container' => [

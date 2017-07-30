@@ -19,8 +19,19 @@ class ServiceAuthenticatorDefault
     function newService()
     {
         $realm      = aIdentifier::DEFAULT_REALM;
-        $adapter    = new IdentityCredentialDigestFile;;
+
+        $adapter    = new IdentityCredentialDigestFile;
+
+        // Affect Application Request/Response
+        $request    = \IOC::GetIoC()->get('/HttpRequest');
+        $response   = \IOC::GetIoC()->get('/HttpResponse');
+
         $identifier = new IdentifierHttpBasicAuth;
+        $identifier
+            ->setRequest($request)
+            ->setResponse($response)
+        ;
+
         $identifier->setCredentialAdapter($adapter);
         $identifier->setRealm($realm);
 

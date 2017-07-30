@@ -10,7 +10,7 @@ use Poirot\Std\Struct\DataEntity;
 class ServiceAuthenticatorsContainer
     extends aServiceContainer
 {
-    const CONF = 'module.authorization.authenticators';
+    const CONF = 'authenticators';
     const NAME = 'ContainerAuthenticators';
 
     /** @var string Service Name */
@@ -49,7 +49,7 @@ class ServiceAuthenticatorsContainer
         $config   = $services->get('/sapi');
         $orig = $config   = $config->config();
         /** @var DataEntity $config */
-        $config   = $config->get(\Module\Authorization\Module::CONF_KEY, array());
+        $config   = $config->get(\Module\Authorization\Module::CONF, array());
 
         if (!isset($config[self::CONF]) && !is_array($config[self::CONF]))
             return null;
