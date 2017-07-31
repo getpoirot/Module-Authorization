@@ -157,8 +157,12 @@ namespace Module\Authorization
 
 namespace Module\Authorization
 {
+    use Poirot\AuthSystem\Authenticate\Authenticator;
+    use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
+
+
     /**
-     * @method static AuthenticatorAction Authenticator($authenticator = null)
+     * @method static AuthenticatorAction|iAuthenticator|Authenticator Authenticator($authenticator = null)
      */
     class Actions extends \IOC
     { }
