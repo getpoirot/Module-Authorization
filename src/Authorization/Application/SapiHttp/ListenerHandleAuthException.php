@@ -5,6 +5,8 @@ use Module\HttpRenderer\RenderStrategy\aRenderStrategy;
 use Poirot\Application\aSapi;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 use Poirot\Events\Listener\aListener;
+use Poirot\Http\HttpRequest;
+use Poirot\Http\Interfaces\iHeader;
 
 
 class ListenerHandleAuthException
@@ -18,14 +20,25 @@ class ListenerHandleAuthException
      */
     function __invoke($exception = null, $sapi = null)
     {
-        /** @var aRenderStrategy $renderStrategy */
-        /*
-        TODO The Render Strategy Is Deprecated And Not Accessible.
-        $renderStrategy = $sapi->services()->get('renderStrategy');
-        if (strpos($renderStrategy->getContentType(), 'text/html') === false)
-            // Just Handle Html Follows; Lets Other Behind; exp. when renderer is json just response error result!!
-            return;
-        */
+        $continue = false;
+
+        /** @var HttpRequest $request */
+        $request = $sapi->services()->get('/httpRequest');
+        if ( $request->headers()->has('Accept') ) {
+            /** @var iHeader $h */
+            foreach ( $request->headers()->get('Accept') as $h ) {
+                if ( strpos($h->renderValueLine(), 'text/html') === false )
+                    continue;
+
+                // Just Handle Html Follows; Lets Other Behind; exp. when renderer is json just response error result!!
+                $continue = true;
+                break;
+            }
+        }
+
+        if (false === $continue)
+            return null;
+
 
         if (! $exception instanceof exAuthentication )
             ## unknown error
