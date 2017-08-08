@@ -2,7 +2,7 @@
 use Module\Authorization\Services\Authenticators\ServiceAuthenticatorDefault;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
-use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
+use Module\HttpRenderer\RenderStrategy\RenderDefaultStrategy;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 
 return [
@@ -27,7 +27,7 @@ return [
     ],
 
     // View Renderer Options
-    ListenersRenderDefaultStrategy::CONF_KEY => [
+    RenderDefaultStrategy::CONF_KEY => [
         'themes' => [
             'default' => [
                 'layout' => [
