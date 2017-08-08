@@ -1,7 +1,7 @@
 <?php
 namespace Module\Authorization\Application\SapiHttp;
 
-use Module\HttpRenderer\Services\RenderStrategy\aListenerRenderStrategy;
+use Module\HttpRenderer\RenderStrategy\aRenderStrategy;
 use Poirot\Application\aSapi;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 use Poirot\Events\Listener\aListener;
@@ -18,11 +18,14 @@ class ListenerHandleAuthException
      */
     function __invoke($exception = null, $sapi = null)
     {
-        /** @var aListenerRenderStrategy $renderStrategy */
+        /** @var aRenderStrategy $renderStrategy */
+        /*
+        TODO The Render Strategy Is Deprecated And Not Accessible.
         $renderStrategy = $sapi->services()->get('renderStrategy');
         if (strpos($renderStrategy->getContentType(), 'text/html') === false)
             // Just Handle Html Follows; Lets Other Behind; exp. when renderer is json just response error result!!
             return;
+        */
 
         if (! $exception instanceof exAuthentication )
             ## unknown error
