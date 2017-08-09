@@ -1,7 +1,6 @@
 <?php
 namespace Module\Authorization\Application\SapiHttp;
 
-use Module\HttpRenderer\RenderStrategy\aRenderStrategy;
 use Poirot\Application\aSapi;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 use Poirot\Events\Listener\aListener;
