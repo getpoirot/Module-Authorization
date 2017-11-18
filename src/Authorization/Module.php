@@ -6,6 +6,7 @@ namespace Module\Authorization
     use Module\Authorization\Services\ServiceAuthenticatorsContainer;
     use Module\Authorization\Services\ServiceGuardsContainer;
     use Poirot\Application\aSapi;
+    use Poirot\Application\Interfaces\iApplication;
     use Poirot\Application\Interfaces\Sapi\iSapiModule;
     use Poirot\Application\Interfaces\Sapi;
     use Poirot\Application\Sapi\Event\EventHeapOfSapi;
@@ -41,6 +42,7 @@ namespace Module\Authorization
      *
      */
     class Module implements iSapiModule
+        , Sapi\Module\Feature\iFeatureModuleInitSapi
         , Sapi\Module\Feature\iFeatureModuleAutoload
         , Sapi\Module\Feature\iFeatureModuleMergeConfig
         , Sapi\Module\Feature\iFeatureModuleNestServices
@@ -50,6 +52,25 @@ namespace Module\Authorization
     {
         const CONF = 'module.authorization';
 
+
+        /**
+         * Init Module Against Application
+         *
+         * - determine sapi server, cli or http
+         *
+         * priority: 1000 A
+         *
+         * @param iApplication|aSapi $sapi Application Instance
+         *
+         * @return false|null False mean not setup with other module features (skip module)
+         * @throws \Exception
+         */
+        function initialize($sapi)
+        {
+            if ( \Poirot\isCommandLine( $sapi->getSapiName() ) )
+                // Sapi Is Not HTTP. SKIP Module Load!!
+                return false;
+        }
 
         /**
          * @inheritdoc
