@@ -10,13 +10,12 @@
  *
  * @see \Module\Authorization::getServices()
  */
-
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
 
 return [
     'services' => [
-        'ContainerGuards'         => ServiceGuardsContainer::class,
-        'ContainerAuthenticators' => ServiceAuthenticatorsContainer::class,
+        'ContainerGuards'                    => ServiceGuardsContainer::class,
+        ServiceAuthenticatorsContainer::NAME => ServiceAuthenticatorsContainer::class,
     ],
 ];
