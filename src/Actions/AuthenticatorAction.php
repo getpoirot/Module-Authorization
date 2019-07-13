@@ -12,22 +12,22 @@ class AuthenticatorAction
 {
     const AUTHENTICATOR_DEFAULT = 'default';
 
-    /** @var AuthenticatorPlugins */
-    protected $authenticators;
     /** @var GuardPlugins */
     protected $guards;
+    /** @var AuthenticatorPlugins */
+    protected $authenticators;
 
-
+    
     /**
      * AuthenticatorAction
      *
-     * @param $authenticators @IoC /module/authorization/services/ContainerAuthenticators
-     * @param $guards         @IoC /module/authorization/services/ContainerGuards
+     * @param $guards         @IoC /module/authorization/services/GuardPlugins
+     * @param $authenticators @IoC /module/authorization/services/AuthenticatorPlugins
      */
-    function __construct(AuthenticatorPlugins $authenticators, GuardPlugins $guards)
+    function __construct(GuardPlugins $guards, AuthenticatorPlugins $authenticators)
     {
-        $this->authenticators = $authenticators;
         $this->guards = $guards;
+        $this->authenticators = $authenticators;
     }
 
     /**
