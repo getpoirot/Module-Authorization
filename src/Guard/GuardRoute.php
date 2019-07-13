@@ -3,8 +3,9 @@ namespace Module\Authorization\Guard;
 
 use Module\Authorization\Guard\RestrictIP\IdentityAuthorize;
 use Module\Authorization\Guard\Route\ResourceAuthorize;
+use Module\HttpFoundation\Events\Listener\ListenerMatchRequest;
 use Poirot\Application\Sapi\Event\EventHeapOfSapi;
-use Poirot\AuthSystem\Authenticate\Exceptions\exAccessDenied;
+use Poirot\AuthSystem\Authenticate\Exceptions\AccessDeniedError;
 use Poirot\AuthSystem\Authenticate\Exceptions\exNotAuthenticated;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
 use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
@@ -16,11 +17,13 @@ use Poirot\Router\Route\RouteSegment;
 class GuardRoute
     extends aGuard
 {
+    const WEIGHT = ListenerMatchRequest::WEIGHT - 200; // after match request
+
     /** @var iAuthenticator */
     protected $authenticator;
-    protected $routesDenied = array(
-        # 'main/ouath/*',
-    );
+    protected $routesDenied = [
+        #'main/ouath/*',
+    ];
 
 
     /**
@@ -68,6 +71,7 @@ class GuardRoute
      * @param iEvent|EventHeapOfSapi $event
      *
      * @return $this
+     * @throws \Exception
      */
     function attachToEvent(iEvent $event)
     {
@@ -75,13 +79,12 @@ class GuardRoute
             // Only Work With Http Sapi
             return $this;
 
-        $self = $this;
 
+        $self = $this;
         $event->on(EventHeapOfSapi::EVENT_APP_MATCH_REQUEST
             , function($route_match = null) use ($self) {
                 $self->_assertAccess($route_match);
-            }
-            , /* //todo use constant */ -10 * 10 // run after route match
+            }, self::WEIGHT
         );
 
         return $this;
@@ -148,8 +151,9 @@ class GuardRoute
 
         $resource = new ResourceAuthorize();
         $resource->setRoute($route_match);
-        if (!$this->isAllowed(null, $resource)) // determine current authenticated user
-            throw new exAccessDenied($this->authenticator);
+        if (! $this->isAllowed(null, $resource) )
+            // determine current authenticated user
+            throw new AccessDeniedError($this->authenticator);
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Module\Authorization\Services\Guards;
 use Poirot\Ioc\Container\Service\aServiceContainer;
 
 
-abstract class aServiceGuard
+abstract class aGuardService
     extends aServiceContainer
 {
     /** @var string Default Registered Authenticator Name */

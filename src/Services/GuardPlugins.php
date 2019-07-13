@@ -1,7 +1,7 @@
 <?php
 namespace Module\Authorization\Services;
 
-use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
+use Module\Authorization\Interfaces\iGuard;
 use Poirot\Ioc\Container\aContainerCapped;
 use Poirot\Ioc\Container\BuildContainer;
 use Poirot\Ioc\Container\Exception\exContainerInvalidServiceType;
@@ -9,7 +9,7 @@ use Poirot\Ioc\Container\Service\ServicePluginLoader;
 use Poirot\Loader\LoaderMapResource;
 
 
-class ContainerAuthenticatorsCapped
+class GuardPlugins
     extends aContainerCapped
 {
     protected $_map_resolver_options = [
@@ -21,8 +21,6 @@ class ContainerAuthenticatorsCapped
      * Construct
      *
      * @param BuildContainer $cBuilder
-     *
-     * @throws \Exception
      */
     function __construct(BuildContainer $cBuilder = null)
     {
@@ -43,7 +41,7 @@ class ContainerAuthenticatorsCapped
         if (!is_object($pluginInstance))
             throw new \Exception(sprintf('Can`t resolve to (%s) Instance.', $pluginInstance));
 
-        if (!$pluginInstance instanceof iAuthenticator)
+        if (!$pluginInstance instanceof iGuard)
             throw new exContainerInvalidServiceType('Invalid Plugin Of Content Object Provided.');
 
     }

@@ -1,11 +1,8 @@
 <?php
-use Module\Authorization\Actions\ServiceAuthenticatorAction;
+use Module\Authorization\Actions;
 
-/**
- * @see \Poirot\Ioc\Container\BuildContainer
- */
-return array(
-    'services' => array(
-        'Authenticator' => ServiceAuthenticatorAction::class,
-    ),
-);
+return [
+    'services' => [
+        Actions::Authenticator => Actions\AuthenticatorAction::class,
+    ],
+];

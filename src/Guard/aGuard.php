@@ -2,11 +2,8 @@
 namespace Module\Authorization\Guard;
 
 use Module\Authorization\Interfaces\iGuard;
-
 use Poirot\Application\Sapi\Event\EventHeapOfSapi;
-
 use Poirot\Events\Interfaces\iEvent;
-
 use Poirot\Std\ConfigurableSetter;
 
 

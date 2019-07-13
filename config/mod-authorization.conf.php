@@ -1,43 +1,23 @@
 <?php
-use Module\Authorization\Services\Authenticators\ServiceAuthenticatorDefault;
-use Module\Authorization\Services\ServiceAuthenticatorsContainer;
-use Module\Authorization\Services\ServiceGuardsContainer;
-use Module\HttpRenderer\RenderStrategy\RenderDefaultStrategy;
-use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
+use Module\Authorization\Services\Authenticators\AuthenticatorDefaultService;
+use Module\Authorization\Services\AuthenticatorPluginsService;
+use Module\Authorization\Services\GuardPluginsService;
 
 return [
-    \Module\Authorization\Module::CONF => [
-
-        ServiceAuthenticatorsContainer::CONF => [
-            'plugins_container' => [
-                'services' => [
-                    // Authenticators Services
-                    'default' => ServiceAuthenticatorDefault::class,
-                ],
-            ],
-        ],
-
-        ServiceGuardsContainer::CONF => [
-            'plugins_container' => [
-                'services' => [
-                    // Guards Services
-                ],
+    AuthenticatorPluginsService::class => [
+        'plugins' => [
+            'services' => [
+                // Authenticators Services
+                'default' => AuthenticatorDefaultService::class,
             ],
         ],
     ],
 
-    // View Renderer Options
-    RenderDefaultStrategy::CONF_KEY => [
-        'themes' => [
-            'default' => [
-                'layout' => [
-                    'exception' => [
-                        // Display Authentication Exceptions Specific Template
-                        exAuthentication::class => 'error/authorization/401',
-                    ],
-                ],
+    GuardPluginsService::class => [
+        'plugins' => [
+            'services' => [
+                // Guards Services
             ],
         ],
     ],
 ];
-

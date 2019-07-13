@@ -2,43 +2,41 @@
 namespace Module\Authorization\Actions;
 
 use Module\Authorization\Interfaces\iGuard;
-use Module\Authorization\Services\ContainerAuthenticatorsCapped;
-use Module\Authorization\Services\ContainerGuardsCapped;
+use Module\Authorization\Services\AuthenticatorPlugins;
+use Module\Authorization\Services\GuardPlugins;
 use Poirot\AuthSystem\Authenticate\Authenticator;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
 
 
 class AuthenticatorAction
 {
-    const CONF_AUTHENTICATORS   = 'authenticators';
-    const CONF_GUARDS           = 'guards';
-
     const AUTHENTICATOR_DEFAULT = 'default';
 
-
-    /** @var ContainerAuthenticatorsCapped */
+    /** @var AuthenticatorPlugins */
     protected $authenticators;
-    /** @var ContainerGuardsCapped */
+    /** @var GuardPlugins */
     protected $guards;
 
 
     /**
-     * AuthenticatorAction constructor.
+     * AuthenticatorAction
      *
-     * @param $authenticators @IoC /module/authorization/ContainerAuthenticators
-     * @param $guards         @IoC /module/authorization/ContainerGuards
+     * @param $authenticators @IoC /module/authorization/services/ContainerAuthenticators
+     * @param $guards         @IoC /module/authorization/services/ContainerGuards
      */
-    function __construct(ContainerAuthenticatorsCapped $authenticators, ContainerGuardsCapped $guards)
+    function __construct(AuthenticatorPlugins $authenticators, GuardPlugins $guards)
     {
         $this->authenticators = $authenticators;
         $this->guards = $guards;
     }
 
     /**
+     * Invoke as Callable
      *
      * @param null|string $authenticator Authenticator name
      *
-     * @return $this
+     * @return $this|iAuthenticator|Authenticator
+     * @throws \Exception
      */
     function __invoke($authenticator = null)
     {
@@ -59,11 +57,10 @@ class AuthenticatorAction
      */
     function authenticator($authenticatorName = self::AUTHENTICATOR_DEFAULT)
     {
-        if (!$this->authenticators->has($authenticatorName))
+        if (! $this->authenticators->has($authenticatorName) )
             throw new \Exception(sprintf('Authenticator (%s) Not Registered.', $authenticatorName));
 
-        $authenticator = $this->authenticators->get($authenticatorName);
-        return $authenticator;
+        return $this->authenticators->get($authenticatorName);
     }
 
     /**
@@ -89,8 +86,7 @@ class AuthenticatorAction
         if (! $this->guards->has($authorizeOfGuardName) )
             throw new \Exception(sprintf('Guard Authorization (%s) Not Registered.', $authorizeOfGuardName));
 
-        $guard = $this->guards->get($authorizeOfGuardName);
-        return $guard;
+        return $this->guards->get($authorizeOfGuardName);
     }
 
     /**

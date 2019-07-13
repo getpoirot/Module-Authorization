@@ -2,7 +2,7 @@
 namespace Module\Authorization\Application\SapiHttp;
 
 use Poirot\Application\aSapi;
-use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
+use Poirot\AuthSystem\Authenticate\Exceptions\AuthenticationError;
 use Poirot\Events\Listener\aListener;
 use Poirot\Http\HttpRequest;
 use Poirot\Http\Interfaces\iHeader;
@@ -39,7 +39,7 @@ class ListenerHandleAuthException
             return null;
 
 
-        if (! $exception instanceof exAuthentication )
+        if (! $exception instanceof AuthenticationError )
             ## unknown error
             return;
 

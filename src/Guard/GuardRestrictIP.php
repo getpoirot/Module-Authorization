@@ -2,15 +2,11 @@
 namespace Module\Authorization\Guard;
 
 use Module\Authorization\Guard\RestrictIP\IdentityAuthorize;
-
 use Poirot\Application\Sapi\Event\EventHeapOfSapi;
-
-use Poirot\AuthSystem\Authenticate\Exceptions\exAccessDenied;
-use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
-
+use Poirot\AuthSystem\Authenticate\Exceptions\AccessDeniedError;
+use Poirot\AuthSystem\Authenticate\Exceptions\AuthenticationError;
 use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
 use Poirot\AuthSystem\Authorize\Interfaces\iResourceAuthorize;
-
 use Poirot\Events\Interfaces\iEvent;
 
 
@@ -30,8 +26,8 @@ class GuardRestrictIP
      *   on other route names, and only AdminUser has access on
      *   admin route
      *
-     * @param IdentityAuthorize  $role
-     * @param iResourceAuthorize $resource
+     * @param iIdentity|IdentityAuthorize $role
+     * @param iResourceAuthorize          $resource
      *
      * @return boolean
      */
@@ -55,6 +51,7 @@ class GuardRestrictIP
      * @param iEvent|EventHeapOfSapi $event
      *
      * @return $this
+     * @throws \Exception
      */
     function attachToEvent(iEvent $event)
     {
@@ -77,12 +74,12 @@ class GuardRestrictIP
     /**
      * Assert Access
      *
-     * @throws exAuthentication Not allowed
+     * @throws AuthenticationError Not allowed
      */
     protected function _assertAccess()
     {
         if (!$this->isAllowed())
-            throw new exAccessDenied;
+            throw new AccessDeniedError;
     }
 
 
