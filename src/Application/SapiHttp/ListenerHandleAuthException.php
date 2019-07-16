@@ -6,6 +6,7 @@ use Poirot\AuthSystem\Authenticate\Exceptions\AuthenticationError;
 use Poirot\Events\Listener\aListener;
 use Poirot\Http\HttpRequest;
 use Poirot\Http\Interfaces\iHeader;
+use Poirot\Http\Interfaces\iHttpRequest;
 
 
 class ListenerHandleAuthException
@@ -22,7 +23,7 @@ class ListenerHandleAuthException
         $continue = false;
 
         /** @var HttpRequest $request */
-        $request = $sapi->services()->get('/httpRequest');
+        $request = $sapi->services()->get(iHttpRequest::class);
         if ( $request->headers()->has('Accept') ) {
             /** @var iHeader $h */
             foreach ( $request->headers()->get('Accept') as $h ) {

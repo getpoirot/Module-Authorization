@@ -17,7 +17,7 @@ class AuthenticatorAction
     /** @var AuthenticatorPlugins */
     protected $authenticators;
 
-    
+
     /**
      * AuthenticatorAction
      *

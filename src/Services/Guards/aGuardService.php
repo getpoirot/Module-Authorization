@@ -1,6 +1,8 @@
 <?php
 namespace Module\Authorization\Services\Guards;
 
+use Module\Authorization\Interfaces\iGuard;
+use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
 use Poirot\Ioc\Container\Service\aServiceContainer;
 
 
@@ -12,18 +14,14 @@ abstract class aGuardService
 
 
     /**
-     * Create Service
+     * Authenticator Name Related To This Guard
      *
-     * @return mixed
+     * @param string $name
      */
-    // abstract function newService();
-
-
     function setAuthenticatorName($name)
     {
         $this->authenticatorName = $name;
     }
-
 
     // ..
 
@@ -32,10 +30,14 @@ abstract class aGuardService
      *
      * @param string $name
      *
-     * @return \Module\Authorization\Actions\AuthenticatorAction
+     * @return iAuthenticator
+     * @throws \Exception
      */
-    protected function _attainAuthenticatorByName($name)
+    protected function _attainAuthenticatorByName($name = null)
     {
+        if (! $name = $name ?? $this->authenticatorName)
+            throw new \Exception('Authenticator name is not set.');
+
         return \Module\Authorization\Actions::Authenticator($name);
     }
 }
